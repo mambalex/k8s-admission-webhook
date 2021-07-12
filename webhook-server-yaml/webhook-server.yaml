@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-server
+  namespace: default
+  labels:
+    app: webhook-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-server
+  template:
+    metadata:
+      labels:
+        app: webhook-server
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: webhook-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1234
+      containers:
+      - name: server
+        image: mambalex/webhook-server:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8443
+          name: tls
+        - containerPort: 80
+          name: metrics
+        volumeMounts:
+        - name: webhook-tls-certs
+          mountPath: /etc/webhook/certs/
+          readOnly: true
+      volumes:
+      - name: webhook-tls-certs
+        secret:
+          secretName: webhook-server-tls
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-server
+  namespace: default
+spec:
+  selector:
+    app: webhook-server
+  ports:
+    - port: 443
+      targetPort: tls
+      name: application
+    - port: 80
+      targetPort: metrics
+      name: metrics
