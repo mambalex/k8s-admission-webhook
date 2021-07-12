@@ -1,0 +1,2 @@
+[SAN]
+subjectAltName=DNS:webhook-server,DNS:webhook-server.default.svc.cluster.local,DNS:webhook-server.default.svc,DNS:localhost
