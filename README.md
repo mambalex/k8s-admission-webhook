@@ -8,11 +8,10 @@ There are two types of admission webhooks: **Mutating webhook** & **Validation w
 I'm going to create a mutating webhook that will inject a label to certain pods upon creation. (AKA mutaing)
 
 ## Installation (local)
-<hr/>
 
 Create a kind cluster:
 
-```
+```bash
 kind create cluster --name webhook --image kindest/node:v1.20.2
 ```
 
@@ -22,7 +21,7 @@ To extend the native functionalities, these admission webhook controllers call a
 This poses a problem for how we handle this webhook server certificate and how to pass CA information to the API server automatically.
 
 I created a script for generating tls certs and CA.
-```
+```bash
 cd tls
 ./tls-generator.sh
 
@@ -35,7 +34,7 @@ base64 webhook-server.key
 ```
 
 ## Mutating webhook
-A custom [admission webhook server](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks)  is a simple HTTP server with TLS that exposes endpoints for mutation and validation.
+A custom [admission webhook server](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks)  is just a simple HTTP server with TLS that exposes endpoints for mutation and validation.
 
 The implementation details are in the `webhook-server-src` folder.
 
